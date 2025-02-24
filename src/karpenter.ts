@@ -148,7 +148,7 @@ export class Karpenter extends pulumi.ComponentResource {
             roleArn: controllerRoleArn,
         }, { parent: this });
 
-        const nodeTerminationEventRules = this.nodeTerminationEventRules(name);
+        this.nodeTerminationEventRules(name);
 
         const kubeconfig = pulumi.output(args.kubeconfig).apply(kubeconfig => {
             if (kubeconfig) {
@@ -166,7 +166,7 @@ export class Karpenter extends pulumi.ComponentResource {
 
         const region = getRegion(this);
 
-        const karpenter = new k8s.helm.v3.Release(`${name}-karpenter`, {
+        new k8s.helm.v3.Release(`${name}-karpenter`, {
             chart: "oci://public.ecr.aws/karpenter/karpenter",
             version: args.version,
             namespace: "kube-system",
