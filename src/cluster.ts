@@ -43,7 +43,7 @@ export interface ClusterArgs {
      * The support type for the EKS cluster.
      * Can be either STANDARD or EXTENDED.
      */
-    supportType?: SupportType;
+    supportType?: pulumi.Input<string>;
 
     /**
      * Configuration for the cluster's networking, including IP family and CIDR ranges.
@@ -134,7 +134,7 @@ export interface VpcConfig {
      * Types of endpoints to enable for the EKS API server.
      * Can be "private" and/or "public". Defaults to ["public"] if not specified.
      */
-    apiServerEndpoints?: pulumi.Input<pulumi.Input<ClusterEndpointType>[]>;
+    apiServerEndpoints?: pulumi.Input<pulumi.Input<string>[]>;
 }
 
 /**
@@ -156,7 +156,7 @@ export interface NetworkConfig {
      * IP family to use for the cluster networking.
      * Determines whether the cluster will use IPv4 or IPv6 networking.
      */
-    ipFamily: pulumi.Input<"ipv4" | "ipv6">;
+    ipFamily: pulumi.Input<string>;
 
     /**
      * CIDR block for Kubernetes services.
