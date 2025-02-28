@@ -86,7 +86,7 @@ export interface NamespacedServiceAccount {
  * The trust relationship is configured to only allow the specified service accounts to assume the role.
  */
 export class IrsaRole extends pulumi.ComponentResource {
-  public readonly role: aws.iam.Role;
+  public readonly roleName: pulumi.Output<string>;
   constructor(
     name: string,
     args: IrsaRoleArgs,
@@ -138,17 +138,17 @@ export class IrsaRole extends pulumi.ComponentResource {
       { parent: this },
     ).json;
 
-    this.role = new aws.iam.Role(
+    this.roleName = new aws.iam.Role(
       name,
       {
         assumeRolePolicy: trustRelationship,
         ...args,
       },
       { parent: this },
-    );
+    ).name;
 
     this.registerOutputs({
-      role: this.role,
+      roleName: this.roleName,
     });
   }
 
