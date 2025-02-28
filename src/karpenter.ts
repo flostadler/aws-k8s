@@ -75,9 +75,9 @@ export interface KarpenterArgs {
   version: pulumi.Input<string>;
 
   /**
-   * Additional values to pass to the Karpenter Helm chart encoded as a JSON string.
+   * Additional values to pass to the Karpenter Helm chart.
    */
-  helmValues?: pulumi.Input<string>;
+  helmValues?: pulumi.Input<object>;
 
   /**
    * Tags to apply to all resources created by this component.
@@ -212,7 +212,7 @@ export class Karpenter extends pulumi.ComponentResource {
         namespace: 'kube-system',
         atomic: true,
         values: args.helmValues
-          ? pulumi.jsonParse(args.helmValues).apply((helmValues) => ({
+          ? pulumi.output(args.helmValues).apply((helmValues) => ({
               dnsPolicy: 'Default',
               serviceAccount: {
                 name: serviceAccount,

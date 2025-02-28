@@ -14,13 +14,13 @@ const eksCluster = new cluster.Cluster("cluster", {
     },
     addons: {
         coredns: {
-            configurationValues: JSON.stringify({
+            configurationValues: {
                 autoScaling: {
                     enabled: true,
                     minReplicas: 2,
                     maxReplicas: 10,
                 },
-            }),
+            },
         },
         "eks-pod-identity-agent": {},
         "kube-proxy": {},
@@ -41,7 +41,7 @@ const karpenterInstance = new karpenter.Karpenter("karpenter", {
             "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
         ],
     },
-    helmValues: JSON.stringify({
+    helmValues: {
         nodeSelector: {
             "karpenter.sh/nodepool": "system"
         },
@@ -58,7 +58,7 @@ const karpenterInstance = new karpenter.Karpenter("karpenter", {
                 }
             }
         },
-    }),
+    },
 }, { dependsOn: eksCluster });
 
 const k8sProvider = new k8s.Provider("k8s", {
