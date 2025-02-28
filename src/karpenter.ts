@@ -77,7 +77,7 @@ export interface KarpenterArgs {
   /**
    * Additional values to pass to the Karpenter Helm chart.
    */
-  helmValues?: pulumi.Input<object>;
+  helmValues?: pulumi.Input<{[key: string]: any}>;
 
   /**
    * Tags to apply to all resources created by this component.

@@ -152,7 +152,7 @@ export interface AddonConfiguration {
   /**
    * custom configuration values for addons. It must match the JSON schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
    */
-  configurationValues?: pulumi.Input<object>;
+  configurationValues?: pulumi.Input<{[key: string]: any}>;
   /**
    * Whether to use the most recent version of the addon.
    * If true, the addon will be automatically updated to the latest version.
