@@ -14,13 +14,13 @@ const eksCluster = new cluster.Cluster("cluster", {
     },
     addons: {
         coredns: {
-            configurationValues: {
-                "autoScaling": {
+            configurationValues: JSON.stringify({
+                autoScaling: {
                     enabled: true,
                     minReplicas: 2,
                     maxReplicas: 10,
                 },
-            },
+            }),
         },
         "eks-pod-identity-agent": {},
         "kube-proxy": {},
@@ -34,14 +34,14 @@ const eksCluster = new cluster.Cluster("cluster", {
 });
 
 const karpenterInstance = new karpenter.Karpenter("karpenter", {
-    clusterName: eksCluster.cluster.name,
+    clusterName: eksCluster.clusterName,
     version: "1.1.1",
     nodeRoleArgs: {
         additionalManagedPolicyArns: [
             "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
         ],
     },
-    helmValues: {
+    helmValues: JSON.stringify({
         nodeSelector: {
             "karpenter.sh/nodepool": "system"
         },
@@ -58,11 +58,11 @@ const karpenterInstance = new karpenter.Karpenter("karpenter", {
                 }
             }
         },
-    }
+    }),
 }, { dependsOn: eksCluster });
 
 const k8sProvider = new k8s.Provider("k8s", {
-    kubeconfig: getKubeConfig(eksCluster.cluster.name),
+    kubeconfig: getKubeConfig(eksCluster.clusterName),
 });
 
 const nodeClass = new k8s.apiextensions.CustomResource("karpenter-node-class", {
@@ -80,7 +80,7 @@ const nodeClass = new k8s.apiextensions.CustomResource("karpenter-node-class", {
             id,
         }))),
         securityGroupSelectorTerms: [{
-            id: eksCluster.cluster.vpcConfig.clusterSecurityGroupId,
+            id: eksCluster.clusterSecurityGroupId,
         }],
     }
 }, { dependsOn: karpenterInstance, provider: k8sProvider });
