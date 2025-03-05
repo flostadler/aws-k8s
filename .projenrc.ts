@@ -49,6 +49,7 @@ const project = new typescript.TypeScriptProject({
     '@pulumi/aws-native',
     '@pulumi/aws',
     '@pulumi/kubernetes',
+    '@pulumi/tls'
   ],
   devDeps: ['@swc/core', '@swc/jest', 'camelcase', '@pulumi/awsx'],
   jestOptions: {

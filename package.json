@@ -49,6 +49,7 @@
     "@pulumi/aws-native": "^1.25.0",
     "@pulumi/kubernetes": "^4.21.1",
     "@pulumi/pulumi": "^3.153.0",
+    "@pulumi/tls": "^5.1.0",
     "pulumi-ts-provider": "https://gitpkg.vercel.app/mikhailshilkov/comp-as-comp/ts/pulumi-ts-provider?20621b672151ec13b7c384d570e713f765cc83ca"
   },
   "main": "src/index.ts",
