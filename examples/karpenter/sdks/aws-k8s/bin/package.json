@@ -1,12 +1,13 @@
 {
     "name": "@pulumi/aws-k8s",
-    "version": "0.0.5",
+    "version": "0.0.7",
     "main": "bin/index.js",
     "scripts": {
         "build": "tsc",
         "postinstall": "node ./scripts/postinstall.js"
     },
     "dependencies": {
+        "@pulumi/aws": "6.70.0",
         "@pulumi/pulumi": "^3.142.0"
     },
     "devDependencies": {
@@ -16,7 +17,7 @@
     "pulumi": {
         "resource": true,
         "name": "aws-k8s",
-        "version": "0.0.5",
+        "version": "0.0.7",
         "server": "git://github.com/flostadler/aws-k8s"
     }
 }

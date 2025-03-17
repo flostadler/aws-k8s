@@ -41,15 +41,15 @@ class Cluster extends pulumi.ComponentResource {
             resourceInputs["version"] = args ? args.version : undefined;
             resourceInputs["vpcConfig"] = args ? args.vpcConfig : undefined;
             resourceInputs["zonalShiftConfig"] = args ? args.zonalShiftConfig : undefined;
+            resourceInputs["cluster"] = undefined /*out*/;
             resourceInputs["clusterAdmins"] = undefined /*out*/;
-            resourceInputs["clusterName"] = undefined /*out*/;
             resourceInputs["clusterRoleArn"] = undefined /*out*/;
             resourceInputs["clusterSecurityGroupId"] = undefined /*out*/;
             resourceInputs["installedAddons"] = undefined /*out*/;
         }
         else {
+            resourceInputs["cluster"] = undefined /*out*/;
             resourceInputs["clusterAdmins"] = undefined /*out*/;
-            resourceInputs["clusterName"] = undefined /*out*/;
             resourceInputs["clusterRoleArn"] = undefined /*out*/;
             resourceInputs["clusterSecurityGroupId"] = undefined /*out*/;
             resourceInputs["encryptionKeyArn"] = undefined /*out*/;

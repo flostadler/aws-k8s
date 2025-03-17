@@ -108,6 +108,10 @@ export interface NetworkConfigArgs {
      */
     serviceCidr: pulumi.Input<string>;
 }
+export interface PvConfigArgs {
+    size: string;
+    storageClass: string;
+}
 export interface QueueArgsArgs {
     /**
      * The length of time, in seconds, for which Amazon SQS can reuse a data key to encrypt or decrypt messages.
@@ -132,6 +136,38 @@ export interface QueueArgsArgs {
      * Key-value mapping of tags for the SQS queue.
      */
     tags?: pulumi.Input<{
+        [key: string]: pulumi.Input<string>;
+    }>;
+}
+export interface ResourceClaimArgs {
+    /**
+     * Name must match the name of one entry in pod.spec.resourceClaims of the Pod where this field is used. It makes that resource available inside a container.
+     */
+    name: pulumi.Input<string>;
+    /**
+     * Request is the name chosen for a request in the referenced claim. If empty, everything from the claim is made available, otherwise only the result of this request.
+     */
+    request?: pulumi.Input<string>;
+}
+export interface ResourceRequirementsArgs {
+    /**
+     * Claims lists the names of resources, defined in spec.resourceClaims, that are used by this container.
+     *
+     * This is an alpha field and requires enabling the DynamicResourceAllocation feature gate.
+     *
+     * This field is immutable. It can only be set for containers.
+     */
+    claims?: pulumi.Input<pulumi.Input<inputs.ResourceClaimArgs>[]>;
+    /**
+     * Limits describes the maximum amount of compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+     */
+    limits?: pulumi.Input<{
+        [key: string]: pulumi.Input<string>;
+    }>;
+    /**
+     * Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. Requests cannot exceed Limits. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+     */
+    requests?: pulumi.Input<{
         [key: string]: pulumi.Input<string>;
     }>;
 }
@@ -177,6 +213,66 @@ export interface RoleInlinePolicyArgs {
      * Policy document as a JSON formatted string.
      */
     policy?: pulumi.Input<string>;
+}
+export interface SelfSignedCertSubjectArgs {
+    /**
+     * Distinguished name: `CN`
+     */
+    commonName?: pulumi.Input<string>;
+    /**
+     * Distinguished name: `C`
+     */
+    country?: pulumi.Input<string>;
+    /**
+     * Distinguished name: `L`
+     */
+    locality?: pulumi.Input<string>;
+    /**
+     * Distinguished name: `O`
+     */
+    organization?: pulumi.Input<string>;
+    /**
+     * Distinguished name: `OU`
+     */
+    organizationalUnit?: pulumi.Input<string>;
+    /**
+     * Distinguished name: `PC`
+     */
+    postalCode?: pulumi.Input<string>;
+    /**
+     * Distinguished name: `ST`
+     */
+    province?: pulumi.Input<string>;
+    /**
+     * Distinguished name: `SERIALNUMBER`
+     */
+    serialNumber?: pulumi.Input<string>;
+    /**
+     * Distinguished name: `STREET`
+     */
+    streetAddresses?: pulumi.Input<pulumi.Input<string>[]>;
+}
+export interface TolerationArgs {
+    /**
+     * Effect indicates the taint effect to match. Empty means match all taint effects. When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.
+     */
+    effect?: pulumi.Input<string>;
+    /**
+     * Key is the taint key that the toleration applies to. Empty means match all taint keys. If the key is empty, operator must be Exists; this combination means to match all values and all keys.
+     */
+    key?: pulumi.Input<string>;
+    /**
+     * Operator represents a key's relationship to the value. Valid operators are Exists and Equal. Defaults to Equal. Exists is equivalent to wildcard for value, so that a pod can tolerate all taints of a particular category.
+     */
+    operator?: pulumi.Input<string>;
+    /**
+     * TolerationSeconds represents the period of time the toleration (which must be of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default, it is not set, which means tolerate the taint forever (do not evict). Zero and negative values will be treated as 0 (evict immediately) by the system.
+     */
+    tolerationSeconds?: pulumi.Input<number>;
+    /**
+     * Value is the taint value the toleration matches to. If the operator is Exists, the value should be empty, otherwise just a regular string.
+     */
+    value?: pulumi.Input<string>;
 }
 export interface VpcConfigArgs {
     /**

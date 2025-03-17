@@ -1,5 +1,6 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as inputs from "./types/input";
+import * as pulumiAws from "@pulumi/aws";
 /**
  * IrsaRole creates an IAM role that can be assumed by Kubernetes service accounts (IRSA).
  * It automatically configures the trust relationship between the IAM role and the EKS cluster's OIDC provider.
@@ -13,7 +14,7 @@ export declare class IrsaRole extends pulumi.ComponentResource {
      * when multiple copies of the Pulumi SDK have been loaded into the same process.
      */
     static isInstance(obj: any): obj is IrsaRole;
-    readonly roleName: pulumi.Output<string>;
+    readonly role: pulumi.Output<pulumiAws.iam.Role>;
     /**
      * Create a IrsaRole resource with the given unique name, arguments, and options.
      *

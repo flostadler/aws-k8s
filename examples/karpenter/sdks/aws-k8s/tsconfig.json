@@ -13,6 +13,8 @@
         "strict": true
     },
     "files": [
+        "buildkitBuilder.ts",
+        "buildkitCerts.ts",
         "cluster.ts",
         "index.ts",
         "irsaRole.ts",

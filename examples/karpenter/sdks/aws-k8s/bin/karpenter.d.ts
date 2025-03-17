@@ -26,6 +26,10 @@ export interface KarpenterArgs {
      * The name of the EKS cluster where Karpenter will be deployed.
      */
     clusterName: pulumi.Input<string>;
+    /**
+     * Configuration for creating the Karpenter controller IAM role.
+     * Only used if controllerRoleArn is not provided.
+     */
     controllerRoleArgs?: inputs.RoleArgsArgs;
     /**
      * The ARN of an existing IAM role to use for the Karpenter controller.
@@ -53,6 +57,9 @@ export interface KarpenterArgs {
      * If not provided, a role will be created using nodeRoleArgs.
      */
     nodeRoleArn?: pulumi.Input<string>;
+    /**
+     * Configuration for the SQS queue used by Karpenter for node interruption handling.
+     */
     queue?: inputs.QueueArgsArgs;
     /**
      * The name of the Kubernetes service account to use for Karpenter.

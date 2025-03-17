@@ -49,10 +49,10 @@ class IrsaRole extends pulumi.ComponentResource {
             resourceInputs["permissionsBoundary"] = args ? args.permissionsBoundary : undefined;
             resourceInputs["serviceAccounts"] = args ? args.serviceAccounts : undefined;
             resourceInputs["tags"] = args ? args.tags : undefined;
-            resourceInputs["roleName"] = undefined /*out*/;
+            resourceInputs["role"] = undefined /*out*/;
         }
         else {
-            resourceInputs["roleName"] = undefined /*out*/;
+            resourceInputs["role"] = undefined /*out*/;
         }
         opts = pulumi.mergeOptions(utilities.resourceOptsDefaults(), opts);
         super(IrsaRole.__pulumiType, name, resourceInputs, opts, true /*remote*/);

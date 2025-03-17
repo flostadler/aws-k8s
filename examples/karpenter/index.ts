@@ -34,8 +34,8 @@ const eksCluster = new cluster.Cluster("cluster", {
 });
 
 const karpenterInstance = new karpenter.Karpenter("karpenter", {
-    clusterName: eksCluster.clusterName,
-    version: "1.1.1",
+    clusterName: eksCluster.cluster.name,
+    version: "1.3.2",
     nodeRoleArgs: {
         additionalManagedPolicyArns: [
             "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
@@ -62,7 +62,7 @@ const karpenterInstance = new karpenter.Karpenter("karpenter", {
 }, { dependsOn: eksCluster });
 
 const k8sProvider = new k8s.Provider("k8s", {
-    kubeconfig: getKubeConfig(eksCluster.clusterName),
+    kubeconfig: getKubeConfig(eksCluster.cluster.name),
 });
 
 const nodeClass = new k8s.apiextensions.CustomResource("karpenter-node-class", {
@@ -133,35 +133,47 @@ const nodePool = new k8s.apiextensions.CustomResource("karpenter-node-pool", {
     }
 }, { dependsOn: [karpenterInstance, nodeClass], provider: k8sProvider });
 
-// const deployment = new k8s.apps.v1.Deployment("inflate", {
-//     metadata: {
-//         name: "inflate"
-//     },
-//     spec: {
-//         replicas: 10,
-//         selector: {
-//             matchLabels: {
-//                 app: "inflate"
-//             }
-//         },
-//         template: {
-//             metadata: {
-//                 labels: {
-//                     app: "inflate"
-//                 }
-//             },
-//             spec: {
-//                 terminationGracePeriodSeconds: 0,
-//                 containers: [{
-//                     name: "inflate",
-//                     image: "public.ecr.aws/eks-distro/kubernetes/pause:3.7",
-//                     resources: {
-//                         requests: {
-//                             cpu: "1"
-//                         }
-//                     }
-//                 }]
-//             }
-//         }
-//     }
-// }, { provider: k8sProvider, dependsOn: nodePool });
+const deployment = new k8s.apps.v1.Deployment("inflate", {
+    metadata: {
+        name: "inflate"
+    },
+    spec: {
+        replicas: 10,
+        selector: {
+            matchLabels: {
+                app: "inflate"
+            }
+        },
+        template: {
+            metadata: {
+                labels: {
+                    app: "inflate"
+                }
+            },
+            spec: {
+                terminationGracePeriodSeconds: 0,
+                topologySpreadConstraints: [
+                    {
+                        maxSkew: 1,
+                        topologyKey: "topology.kubernetes.io/zone",
+                        whenUnsatisfiable: "ScheduleAnyway",
+                        labelSelector: {
+                            matchLabels: {
+                                app: "inflate"
+                            }
+                        }
+                    }
+                ],
+                containers: [{
+                    name: "inflate",
+                    image: "public.ecr.aws/eks-distro/kubernetes/pause:3.7",
+                    resources: {
+                        requests: {
+                            cpu: "1"
+                        }
+                    }
+                }]
+            }
+        }
+    }
+}, { provider: k8sProvider, dependsOn: nodePool });

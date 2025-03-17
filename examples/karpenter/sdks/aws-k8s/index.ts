@@ -5,6 +5,16 @@ import * as pulumi from "@pulumi/pulumi";
 import * as utilities from "./utilities";
 
 // Export members:
+export { BuildkitBuilderArgs } from "./buildkitBuilder";
+export type BuildkitBuilder = import("./buildkitBuilder").BuildkitBuilder;
+export const BuildkitBuilder: typeof import("./buildkitBuilder").BuildkitBuilder = null as any;
+utilities.lazyLoad(exports, ["BuildkitBuilder"], () => require("./buildkitBuilder"));
+
+export { BuildkitCertsArgs } from "./buildkitCerts";
+export type BuildkitCerts = import("./buildkitCerts").BuildkitCerts;
+export const BuildkitCerts: typeof import("./buildkitCerts").BuildkitCerts = null as any;
+utilities.lazyLoad(exports, ["BuildkitCerts"], () => require("./buildkitCerts"));
+
 export { ClusterArgs } from "./cluster";
 export type Cluster = import("./cluster").Cluster;
 export const Cluster: typeof import("./cluster").Cluster = null as any;
@@ -37,6 +47,10 @@ const _module = {
     version: utilities.getVersion(),
     construct: (name: string, type: string, urn: string): pulumi.Resource => {
         switch (type) {
+            case "aws-k8s:index:BuildkitBuilder":
+                return new BuildkitBuilder(name, <any>undefined, { urn })
+            case "aws-k8s:index:BuildkitCerts":
+                return new BuildkitCerts(name, <any>undefined, { urn })
             case "aws-k8s:index:Cluster":
                 return new Cluster(name, <any>undefined, { urn })
             case "aws-k8s:index:IrsaRole":

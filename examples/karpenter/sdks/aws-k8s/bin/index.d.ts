@@ -1,3 +1,9 @@
+export { BuildkitBuilderArgs } from "./buildkitBuilder";
+export type BuildkitBuilder = import("./buildkitBuilder").BuildkitBuilder;
+export declare const BuildkitBuilder: typeof import("./buildkitBuilder").BuildkitBuilder;
+export { BuildkitCertsArgs } from "./buildkitCerts";
+export type BuildkitCerts = import("./buildkitCerts").BuildkitCerts;
+export declare const BuildkitCerts: typeof import("./buildkitCerts").BuildkitCerts;
 export { ClusterArgs } from "./cluster";
 export type Cluster = import("./cluster").Cluster;
 export declare const Cluster: typeof import("./cluster").Cluster;

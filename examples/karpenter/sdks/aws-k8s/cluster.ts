@@ -6,6 +6,8 @@ import * as inputs from "./types/input";
 import * as outputs from "./types/output";
 import * as utilities from "./utilities";
 
+import * as pulumiAws from "@pulumi/aws";
+
 export class Cluster extends pulumi.ComponentResource {
     /** @internal */
     public static readonly __pulumiType = 'aws-k8s:index:Cluster';
@@ -21,8 +23,8 @@ export class Cluster extends pulumi.ComponentResource {
         return obj['__pulumiType'] === Cluster.__pulumiType;
     }
 
+    public /*out*/ readonly cluster!: pulumi.Output<pulumiAws.eks.Cluster>;
     public /*out*/ readonly clusterAdmins!: pulumi.Output<string[]>;
-    public /*out*/ readonly clusterName!: pulumi.Output<string>;
     public /*out*/ readonly clusterRoleArn!: pulumi.Output<string>;
     public /*out*/ readonly clusterSecurityGroupId!: pulumi.Output<string>;
     public readonly encryptionKeyArn!: pulumi.Output<string>;
@@ -53,14 +55,14 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["version"] = args ? args.version : undefined;
             resourceInputs["vpcConfig"] = args ? args.vpcConfig : undefined;
             resourceInputs["zonalShiftConfig"] = args ? args.zonalShiftConfig : undefined;
+            resourceInputs["cluster"] = undefined /*out*/;
             resourceInputs["clusterAdmins"] = undefined /*out*/;
-            resourceInputs["clusterName"] = undefined /*out*/;
             resourceInputs["clusterRoleArn"] = undefined /*out*/;
             resourceInputs["clusterSecurityGroupId"] = undefined /*out*/;
             resourceInputs["installedAddons"] = undefined /*out*/;
         } else {
+            resourceInputs["cluster"] = undefined /*out*/;
             resourceInputs["clusterAdmins"] = undefined /*out*/;
-            resourceInputs["clusterName"] = undefined /*out*/;
             resourceInputs["clusterRoleArn"] = undefined /*out*/;
             resourceInputs["clusterSecurityGroupId"] = undefined /*out*/;
             resourceInputs["encryptionKeyArn"] = undefined /*out*/;
@@ -80,6 +82,9 @@ export interface ClusterArgs {
      * The key is the add-on name and the value is its configuration.
      */
     addons?: pulumi.Input<{[key: string]: pulumi.Input<inputs.AddonConfigurationArgs>}>;
+    /**
+     * Configuration for EKS auto mode, which enables automatic node pool management.
+     */
     autoMode?: inputs.AutoModeConfigArgs;
     /**
      * The ARN of a KMS key to use for encrypting Kubernetes secrets.
@@ -91,6 +96,9 @@ export interface ClusterArgs {
      * If not provided, a name will be generated.
      */
     name?: pulumi.Input<string>;
+    /**
+     * Configuration for the cluster's networking, including IP family and CIDR ranges.
+     */
     networkConfig?: inputs.NetworkConfigArgs;
     /**
      * The ARN of an existing IAM role to use for the EKS cluster.
@@ -115,5 +123,9 @@ export interface ClusterArgs {
      * Configuration for the VPC where the EKS cluster will be created.
      */
     vpcConfig: inputs.VpcConfigArgs;
+    /**
+     * Configuration for EKS Zonal Shift.
+     * Zonal Shift helps maintain availability if there are problems in an Availability Zone.
+     */
     zonalShiftConfig?: inputs.ZonalShiftConfigArgs;
 }

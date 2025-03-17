@@ -1,13 +1,14 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as inputs from "./types/input";
+import * as pulumiAws from "@pulumi/aws";
 export declare class Cluster extends pulumi.ComponentResource {
     /**
      * Returns true if the given object is an instance of Cluster.  This is designed to work even
      * when multiple copies of the Pulumi SDK have been loaded into the same process.
      */
     static isInstance(obj: any): obj is Cluster;
+    readonly cluster: pulumi.Output<pulumiAws.eks.Cluster>;
     readonly clusterAdmins: pulumi.Output<string[]>;
-    readonly clusterName: pulumi.Output<string>;
     readonly clusterRoleArn: pulumi.Output<string>;
     readonly clusterSecurityGroupId: pulumi.Output<string>;
     readonly encryptionKeyArn: pulumi.Output<string>;
@@ -32,6 +33,9 @@ export interface ClusterArgs {
     addons?: pulumi.Input<{
         [key: string]: pulumi.Input<inputs.AddonConfigurationArgs>;
     }>;
+    /**
+     * Configuration for EKS auto mode, which enables automatic node pool management.
+     */
     autoMode?: inputs.AutoModeConfigArgs;
     /**
      * The ARN of a KMS key to use for encrypting Kubernetes secrets.
@@ -43,6 +47,9 @@ export interface ClusterArgs {
      * If not provided, a name will be generated.
      */
     name?: pulumi.Input<string>;
+    /**
+     * Configuration for the cluster's networking, including IP family and CIDR ranges.
+     */
     networkConfig?: inputs.NetworkConfigArgs;
     /**
      * The ARN of an existing IAM role to use for the EKS cluster.
@@ -69,5 +76,9 @@ export interface ClusterArgs {
      * Configuration for the VPC where the EKS cluster will be created.
      */
     vpcConfig: inputs.VpcConfigArgs;
+    /**
+     * Configuration for EKS Zonal Shift.
+     * Zonal Shift helps maintain availability if there are problems in an Availability Zone.
+     */
     zonalShiftConfig?: inputs.ZonalShiftConfigArgs;
 }
