@@ -214,7 +214,7 @@ export interface NetworkConfig {
 }
 
 export class Cluster extends pulumi.ComponentResource {
-  public readonly clusterName: pulumi.Output<string>;
+  public readonly cluster: aws.eks.Cluster;
   public readonly clusterSecurityGroupId: pulumi.Output<string>;
   public readonly encryptionKeyArn: pulumi.Output<string>;
   public readonly clusterRoleArn: pulumi.Output<string>;
@@ -240,7 +240,7 @@ export class Cluster extends pulumi.ComponentResource {
 
     const autoModeRoleArn = this.getAutoModeRoleArn(name, args, partition);
 
-    const cluster = new aws.eks.Cluster(
+    this.cluster = new aws.eks.Cluster(
       name,
       {
         name: args.name,
@@ -337,7 +337,7 @@ export class Cluster extends pulumi.ComponentResource {
       },
     );
 
-    this.clusterSecurityGroupId = cluster.vpcConfig.clusterSecurityGroupId;
+    this.clusterSecurityGroupId = this.cluster.vpcConfig.clusterSecurityGroupId;
 
     const clusterCreator = aws.iam.getSessionContextOutput(
       {
@@ -348,7 +348,7 @@ export class Cluster extends pulumi.ComponentResource {
 
     const clusterCreatorAdmin = this.createClusterAdmins(
       `${name}-cluster-creator-admin`,
-      cluster,
+      this.cluster,
       clusterCreator,
       partition,
       args.tags,
@@ -367,7 +367,7 @@ export class Cluster extends pulumi.ComponentResource {
           return aws.eks.getAddonVersionOutput(
             {
               addonName: addonName,
-              kubernetesVersion: cluster.version,
+              kubernetesVersion: this.cluster.version,
               mostRecent: args.mostRecent,
             },
             { parent: this },
@@ -379,7 +379,7 @@ export class Cluster extends pulumi.ComponentResource {
           `${name}-${addonName}`,
           {
             ...addonArgs,
-            clusterName: cluster.name,
+            clusterName: this.cluster.name,
             addonName: addonName,
             addonVersion: version,
             configurationValues: args.configurationValues
@@ -396,10 +396,8 @@ export class Cluster extends pulumi.ComponentResource {
       addons.apply((addons) => addons.map((addon) => addon.addonName)),
     );
 
-    this.clusterName = cluster.name;
-
     this.registerOutputs({
-      clusterName: cluster.name,
+      cluster: this.cluster,
       encryptionKeyArn: this.encryptionKeyArn,
       clusterRoleArn: this.clusterRoleArn,
       installedAddons: this.installedAddons,

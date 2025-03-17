@@ -5,8 +5,8 @@ export interface BuildkitCertsArgs {
     caSubject?: pulumi.Input<tls.types.input.SelfSignedCertSubject>;
     // The algorithm to use for the client/server certificates. Either "RSA" or "ECDSA".
     keyAlgorithm?: pulumi.Input<string>;
-    serverIPAddresses?: pulumi.Input<string[]>;
-    serverDNSNames?: pulumi.Input<string[]>;
+    serverIPAddresses?: pulumi.Input<pulumi.Input<string>[]>;
+    serverDNSNames?: pulumi.Input<pulumi.Input<string>[]>;
 }
 
 export class BuildkitCerts extends pulumi.ComponentResource {
@@ -34,7 +34,7 @@ export class BuildkitCerts extends pulumi.ComponentResource {
 
         const ca = new tls.SelfSignedCert("ca", {
             privateKeyPem: pk.privateKeyPem,
-            allowedUses: ["certSigning"],
+            allowedUses: ["cert_signing"],
             validityPeriodHours: 10 * 365 * 24, // 10 years
             earlyRenewalHours: 90 * 24, // 90 days
             isCaCertificate: true,
@@ -63,27 +63,36 @@ export class BuildkitCerts extends pulumi.ComponentResource {
 
         // Create server key and certificate
         const serverKey = new tls.PrivateKey(`${name}-server-key`, keyArgs);
-
-        const serverCert = new tls.SelfSignedCert(`${name}-server-cert`, {
+        const serverCertRequest = new tls.CertRequest(`${name}-server-cert-request`, {
             privateKeyPem: serverKey.privateKeyPem,
-            allowedUses: ["keyEncipherment", "digitalSignature", "serverAuth"],
-            validityPeriodHours: 800 * 24, // 800 days (compliant with Apple's limit)
             subject: {
                 organization: "Buildkit development certificate",
             },
             dnsNames: args.serverDNSNames,
             ipAddresses: args.serverIPAddresses,
         });
+        const serverCert = new tls.LocallySignedCert(`${name}-server-cert`, {
+            caPrivateKeyPem: ca.privateKeyPem,
+            caCertPem: ca.certPem,
+            certRequestPem: serverCertRequest.certRequestPem,
+            allowedUses: ["key_encipherment", "digital_signature", "server_auth"],
+            validityPeriodHours: 800 * 24, // 800 days (compliant with Apple's limit)
+        });
 
         // Create client key and certificate
         const clientKey = new tls.PrivateKey(`${name}-client-key`, keyArgs);
-        const clientCert = new tls.SelfSignedCert(`${name}-client-cert`, {
+        const clientCertRequest = new tls.CertRequest(`${name}-client-cert-request`, {
             privateKeyPem: clientKey.privateKeyPem,
-            allowedUses: ["keyEncipherment", "digitalSignature", "clientAuth"],
-            validityPeriodHours: 800 * 24, // 800 days (compliant with Apple's limit)
             subject: {
                 organization: "Buildkit development certificate",
             },
+        });
+        const clientCert = new tls.LocallySignedCert(`${name}-client-cert`, {
+            caPrivateKeyPem: ca.privateKeyPem,
+            caCertPem: ca.certPem,
+            certRequestPem: clientCertRequest.certRequestPem,
+            allowedUses: ["key_encipherment", "digital_signature", "client_auth"],
+            validityPeriodHours: 800 * 24, // 800 days (compliant with Apple's limit)
         });
 
         // Export the certificates and keys as class properties

@@ -11,6 +11,8 @@ export interface BuildkitBuilderArgs {
     pvConfig?: pulumi.Input<PvConfig>;
     bottlerocket?: pulumi.Input<boolean>;
     nodeSelector?: pulumi.Input<{[key: string]: pulumi.Input<string>}>;
+    tolerations?: pulumi.Input<k8s.types.input.core.v1.Toleration[]>;
+    resources?: pulumi.Input<k8s.types.input.core.v1.ResourceRequirements>;
 }
 
 export interface PvConfig {
@@ -87,6 +89,7 @@ export class BuildkitBuilder extends pulumi.ComponentResource {
                                 privileged: true,
                             },
                         }],
+                        tolerations: args.tolerations,
                     },
                 },
             },
@@ -117,6 +120,8 @@ export class BuildkitBuilder extends pulumi.ComponentResource {
           },
           spec: {
             nodeSelector: args.nodeSelector,
+            tolerations: args.tolerations,
+            resources: args.resources,
             containers: [{
               name: "buildkitd",
               image: "moby/buildkit:master-rootless",
