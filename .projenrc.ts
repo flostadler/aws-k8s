@@ -44,7 +44,6 @@ const project = new typescript.TypeScriptProject({
   packageManager: NodePackageManager.NPM,
 
   deps: [
-    'pulumi-ts-provider@https://gitpkg.vercel.app/mikhailshilkov/comp-as-comp/ts/pulumi-ts-provider?20621b672151ec13b7c384d570e713f765cc83ca',
     '@pulumi/pulumi',
     '@pulumi/aws-native',
     '@pulumi/aws',
