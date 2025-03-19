@@ -7,7 +7,7 @@ const vpc = new awsx.ec2.Vpc("vpc", {
     cidrBlock: "10.0.0.0/16",
 });
 
-const eksCluster = new awsK8s.Cluster("cluster", {
+const cluster = new awsK8s.Cluster("cluster", {
     vpcConfig: {
         subnetIds: vpc.publicSubnetIds,
     },
@@ -33,7 +33,7 @@ const eksCluster = new awsK8s.Cluster("cluster", {
 });
 
 const karpenterInstance = new awsK8s.Karpenter("karpenter", {
-    clusterName: eksCluster.cluster.name,
+    clusterName: cluster.eksCluster.name,
     version: "1.3.2",
     nodeRoleArgs: {
         additionalManagedPolicyArns: [
@@ -58,10 +58,10 @@ const karpenterInstance = new awsK8s.Karpenter("karpenter", {
             }
         },
     },
-}, { dependsOn: eksCluster });
+}, { dependsOn: cluster });
 
 const k8sProvider = new k8s.Provider("k8s", {
-    kubeconfig: getKubeConfig(eksCluster.cluster.name),
+    kubeconfig: getKubeConfig(cluster.eksCluster.name),
 });
 
 const nodeClass = new k8s.apiextensions.CustomResource("karpenter-node-class", {
@@ -79,7 +79,7 @@ const nodeClass = new k8s.apiextensions.CustomResource("karpenter-node-class", {
             id,
         }))),
         securityGroupSelectorTerms: [{
-            id: eksCluster.clusterSecurityGroupId,
+            id: cluster.clusterSecurityGroupId,
         }],
     }
 }, { dependsOn: karpenterInstance, provider: k8sProvider });
