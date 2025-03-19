@@ -7,10 +7,10 @@ export declare class Cluster extends pulumi.ComponentResource {
      * when multiple copies of the Pulumi SDK have been loaded into the same process.
      */
     static isInstance(obj: any): obj is Cluster;
-    readonly cluster: pulumi.Output<pulumiAws.eks.Cluster>;
     readonly clusterAdmins: pulumi.Output<string[]>;
     readonly clusterRoleArn: pulumi.Output<string>;
     readonly clusterSecurityGroupId: pulumi.Output<string>;
+    readonly eksCluster: pulumi.Output<pulumiAws.eks.Cluster>;
     readonly encryptionKeyArn: pulumi.Output<string>;
     readonly installedAddons: pulumi.Output<string[]>;
     /**

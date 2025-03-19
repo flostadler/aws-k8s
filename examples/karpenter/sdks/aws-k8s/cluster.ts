@@ -23,10 +23,10 @@ export class Cluster extends pulumi.ComponentResource {
         return obj['__pulumiType'] === Cluster.__pulumiType;
     }
 
-    public /*out*/ readonly cluster!: pulumi.Output<pulumiAws.eks.Cluster>;
     public /*out*/ readonly clusterAdmins!: pulumi.Output<string[]>;
     public /*out*/ readonly clusterRoleArn!: pulumi.Output<string>;
     public /*out*/ readonly clusterSecurityGroupId!: pulumi.Output<string>;
+    public /*out*/ readonly eksCluster!: pulumi.Output<pulumiAws.eks.Cluster>;
     public readonly encryptionKeyArn!: pulumi.Output<string>;
     public /*out*/ readonly installedAddons!: pulumi.Output<string[]>;
 
@@ -55,16 +55,16 @@ export class Cluster extends pulumi.ComponentResource {
             resourceInputs["version"] = args ? args.version : undefined;
             resourceInputs["vpcConfig"] = args ? args.vpcConfig : undefined;
             resourceInputs["zonalShiftConfig"] = args ? args.zonalShiftConfig : undefined;
-            resourceInputs["cluster"] = undefined /*out*/;
             resourceInputs["clusterAdmins"] = undefined /*out*/;
             resourceInputs["clusterRoleArn"] = undefined /*out*/;
             resourceInputs["clusterSecurityGroupId"] = undefined /*out*/;
+            resourceInputs["eksCluster"] = undefined /*out*/;
             resourceInputs["installedAddons"] = undefined /*out*/;
         } else {
-            resourceInputs["cluster"] = undefined /*out*/;
             resourceInputs["clusterAdmins"] = undefined /*out*/;
             resourceInputs["clusterRoleArn"] = undefined /*out*/;
             resourceInputs["clusterSecurityGroupId"] = undefined /*out*/;
+            resourceInputs["eksCluster"] = undefined /*out*/;
             resourceInputs["encryptionKeyArn"] = undefined /*out*/;
             resourceInputs["installedAddons"] = undefined /*out*/;
         }
