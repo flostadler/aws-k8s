@@ -1,14 +1,13 @@
 import * as awsx from "@pulumi/awsx";
 import * as k8s from "@pulumi/kubernetes";
-import * as cluster from "aws-k8s/src/cluster";
+import * as awsK8s from "@pulumi/aws-k8s";
 import { getKubeConfig } from "aws-k8s/src/cluster";
-import * as karpenter from "aws-k8s/src/karpenter";
 
 const vpc = new awsx.ec2.Vpc("vpc", {
     cidrBlock: "10.0.0.0/16",
 });
 
-const eksCluster = new cluster.Cluster("cluster", {
+const eksCluster = new awsK8s.Cluster("cluster", {
     vpcConfig: {
         subnetIds: vpc.publicSubnetIds,
     },
@@ -33,7 +32,7 @@ const eksCluster = new cluster.Cluster("cluster", {
     }
 });
 
-const karpenterInstance = new karpenter.Karpenter("karpenter", {
+const karpenterInstance = new awsK8s.Karpenter("karpenter", {
     clusterName: eksCluster.cluster.name,
     version: "1.3.2",
     nodeRoleArgs: {
