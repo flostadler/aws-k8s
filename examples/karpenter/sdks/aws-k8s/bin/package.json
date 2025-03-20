@@ -1,6 +1,6 @@
 {
     "name": "@pulumi/aws-k8s",
-    "version": "0.0.15",
+    "version": "0.0.17",
     "main": "bin/index.js",
     "scripts": {
         "build": "tsc",
@@ -17,7 +17,7 @@
     "pulumi": {
         "resource": true,
         "name": "aws-k8s",
-        "version": "0.0.15",
+        "version": "0.0.17",
         "server": "git://github.com/flostadler/aws-k8s"
     }
 }
