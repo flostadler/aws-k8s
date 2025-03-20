@@ -7,8 +7,8 @@
     },
     "dependencies": {
         "@pulumi/aws": "^6.0.0",
+        "@pulumi/aws-k8s": "file:sdks/aws-k8s",
         "@pulumi/awsx": "^2.0.2",
-        "@pulumi/pulumi": "^3.113.0",
-        "@pulumi/aws-k8s": "file:sdks/aws-k8s"
+        "@pulumi/pulumi": "^3.113.0"
     }
 }

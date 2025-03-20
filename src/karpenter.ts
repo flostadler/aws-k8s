@@ -12,7 +12,7 @@ import {
   getRoleName,
   RoleArgs,
 } from './util';
-import { getKubeConfig } from './cluster';
+import { getKubeConfig } from './kubeconfig';
 
 /**
  * Configuration options for deploying Karpenter on an EKS cluster.

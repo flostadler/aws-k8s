@@ -1,7 +1,7 @@
 import * as awsx from "@pulumi/awsx";
 import * as k8s from "@pulumi/kubernetes";
 import * as awsK8s from "@pulumi/aws-k8s";
-import { getKubeConfig } from "aws-k8s/src/cluster";
+import { getKubeConfig } from "../../src/kubeconfig";
 
 const vpc = new awsx.ec2.Vpc("vpc", {
     cidrBlock: "10.0.0.0/16",
