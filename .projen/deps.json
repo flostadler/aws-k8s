@@ -1,7 +1,7 @@
 {
   "dependencies": [
     {
-      "name": "@pulumi/awsx",
+      "name": "@hallcor/pulumi-projen-project-types",
       "type": "build"
     },
     {
@@ -28,10 +28,6 @@
     {
       "name": "@typescript-eslint/parser",
       "version": "^8",
-      "type": "build"
-    },
-    {
-      "name": "camelcase",
       "type": "build"
     },
     {
