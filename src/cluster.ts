@@ -214,7 +214,7 @@ export interface NetworkConfig {
 }
 
 export class Cluster extends pulumi.ComponentResource {
-  public readonly eksCluster: aws.eks.Cluster;
+  public readonly eksCluster: pulumi.Output<aws.eks.Cluster>;
   public readonly clusterSecurityGroupId: pulumi.Output<string>;
   public readonly encryptionKeyArn: pulumi.Output<string>;
   public readonly clusterRoleArn: pulumi.Output<string>;
@@ -240,7 +240,7 @@ export class Cluster extends pulumi.ComponentResource {
 
     const autoModeRoleArn = this.getAutoModeRoleArn(name, args, partition);
 
-    this.eksCluster = new aws.eks.Cluster(
+    const eksCluster = new aws.eks.Cluster(
       name,
       {
         name: args.name,
@@ -337,7 +337,7 @@ export class Cluster extends pulumi.ComponentResource {
       },
     );
 
-    this.clusterSecurityGroupId = this.eksCluster.vpcConfig.clusterSecurityGroupId;
+    this.clusterSecurityGroupId = eksCluster.vpcConfig.clusterSecurityGroupId;
 
     const clusterCreator = aws.iam.getSessionContextOutput(
       {
@@ -348,7 +348,7 @@ export class Cluster extends pulumi.ComponentResource {
 
     const clusterCreatorAdmin = this.createClusterAdmins(
       `${name}-cluster-creator-admin`,
-      this.eksCluster,
+      eksCluster,
       clusterCreator,
       partition,
       args.tags,
@@ -396,6 +396,7 @@ export class Cluster extends pulumi.ComponentResource {
       addons.apply((addons) => addons.map((addon) => addon.addonName)),
     );
 
+    this.eksCluster = pulumi.output(eksCluster);
     this.registerOutputs({
       eksCluster: this.eksCluster,
       encryptionKeyArn: this.encryptionKeyArn,
