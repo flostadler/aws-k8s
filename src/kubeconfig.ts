@@ -4,7 +4,7 @@ import { getRegion } from "./util";
 
 export interface KubeConfigArgs {
     // The name of the EKS cluster to get the kubeconfig for
-    clusterName: string;
+    clusterName: pulumi.Input<string>;
 }
 
 export class KubeConfig extends pulumi.ComponentResource {
