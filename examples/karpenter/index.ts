@@ -1,7 +1,6 @@
 import * as awsx from "@pulumi/awsx";
 import * as k8s from "@pulumi/kubernetes";
 import * as awsK8s from "@pulumi/aws-k8s";
-import { getKubeConfig } from "../../src/kubeconfig";
 
 const vpc = new awsx.ec2.Vpc("vpc", {
     cidrBlock: "10.0.0.0/16",
@@ -61,7 +60,7 @@ const karpenterInstance = new awsK8s.Karpenter("karpenter", {
 }, { dependsOn: cluster });
 
 const k8sProvider = new k8s.Provider("k8s", {
-    kubeconfig: getKubeConfig(cluster.eksCluster.name),
+    kubeconfig: new awsK8s.KubeConfig("kubeconfig", { clusterName: cluster.eksCluster.name }).kubeconfig,
 });
 
 const nodeClass = new k8s.apiextensions.CustomResource("karpenter-node-class", {
@@ -126,8 +125,8 @@ const nodePool = new k8s.apiextensions.CustomResource("karpenter-node-pool", {
             cpu: 40
         },
         disruption: {
-            consolidationPolicy: "WhenEmpty",
-            consolidateAfter: "30s"
+            consolidationPolicy: "WhenEmptyOrUnderutilized",
+            consolidateAfter: "5m"
         }
     }
 }, { dependsOn: [karpenterInstance, nodeClass], provider: k8sProvider });
@@ -137,7 +136,7 @@ const deployment = new k8s.apps.v1.Deployment("inflate", {
         name: "inflate"
     },
     spec: {
-        replicas: 10,
+        replicas: 12,
         selector: {
             matchLabels: {
                 app: "inflate"
@@ -154,8 +153,9 @@ const deployment = new k8s.apps.v1.Deployment("inflate", {
                 topologySpreadConstraints: [
                     {
                         maxSkew: 1,
+                        minDomains: 3,
                         topologyKey: "topology.kubernetes.io/zone",
-                        whenUnsatisfiable: "ScheduleAnyway",
+                        whenUnsatisfiable: "DoNotSchedule",
                         labelSelector: {
                             matchLabels: {
                                 app: "inflate"

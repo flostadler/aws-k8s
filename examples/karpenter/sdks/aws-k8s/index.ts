@@ -30,6 +30,11 @@ export type Karpenter = import("./karpenter").Karpenter;
 export const Karpenter: typeof import("./karpenter").Karpenter = null as any;
 utilities.lazyLoad(exports, ["Karpenter"], () => require("./karpenter"));
 
+export { KubeConfigArgs } from "./kubeConfig";
+export type KubeConfig = import("./kubeConfig").KubeConfig;
+export const KubeConfig: typeof import("./kubeConfig").KubeConfig = null as any;
+utilities.lazyLoad(exports, ["KubeConfig"], () => require("./kubeConfig"));
+
 export { ProviderArgs } from "./provider";
 export type Provider = import("./provider").Provider;
 export const Provider: typeof import("./provider").Provider = null as any;
@@ -57,6 +62,8 @@ const _module = {
                 return new IrsaRole(name, <any>undefined, { urn })
             case "aws-k8s:index:Karpenter":
                 return new Karpenter(name, <any>undefined, { urn })
+            case "aws-k8s:index:KubeConfig":
+                return new KubeConfig(name, <any>undefined, { urn })
             default:
                 throw new Error(`unknown resource type ${type}`);
         }
