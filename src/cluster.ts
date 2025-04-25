@@ -7,7 +7,7 @@ export type ClusterEndpointType = 'public' | 'private';
 export type SupportType = 'STANDARD' | 'EXTENDED';
 
 /**
- * Configuration options for creating an EKS cluster
+ * Configuration options for creating an EKS cluster.
  */
 export interface ClusterArgs {
   /**
