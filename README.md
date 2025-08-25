@@ -1,6 +1,6 @@
 # aws-k8s
 
-A collection of Pulumi components for managing AWS EKS clusters and/or related resources.
+A collection of Pulumi components for managing AWS EKS clusters and related resources.
 
 ## Features
 
