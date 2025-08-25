@@ -28,7 +28,7 @@
     "@swc/core": "^1.11.11",
     "@swc/jest": "^0.2.37",
     "@types/jest": "^29.5.14",
-    "@types/node": "^22",
+    "@types/node": "^24.3.0",
     "@typescript-eslint/eslint-plugin": "^8",
     "@typescript-eslint/parser": "^8",
     "commit-and-tag-version": "^12",
@@ -54,7 +54,7 @@
     "@pulumi/tls": "^5.1.1"
   },
   "engines": {
-    "node": ">= 22.0.0"
+    "node": ">= 24.0.0"
   },
   "main": "src/index.ts",
   "license": "Apache-2.0",

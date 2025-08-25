@@ -1,6 +1,6 @@
-import * as pulumi from '@pulumi/pulumi';
 import * as aws from '@pulumi/aws';
 import * as awsNative from '@pulumi/aws-native';
+import * as pulumi from '@pulumi/pulumi';
 import { getPartition, Tags } from './util';
 
 export type ClusterEndpointType = 'public' | 'private';
@@ -152,7 +152,7 @@ export interface AddonConfiguration {
   /**
    * custom configuration values for addons. It must match the JSON schema derived from [describe-addon-configuration](https://docs.aws.amazon.com/cli/latest/reference/eks/describe-addon-configuration.html).
    */
-  configurationValues?: pulumi.Input<{[key: string]: any}>;
+  configurationValues?: pulumi.Input<{ [key: string]: any }>;
   /**
    * Whether to use the most recent version of the addon.
    * If true, the addon will be automatically updated to the latest version.
@@ -358,34 +358,40 @@ export class Cluster extends pulumi.ComponentResource {
     this.encryptionKeyArn = pulumi.output(encryptionKeyArn);
     this.clusterRoleArn = pulumi.output(clusterRoleArn);
 
-    const addons = pulumi.output(args.addons).apply((addons) => {
-      return Object.entries(addons ?? {}).map(([addonName, args]) => {
-        const version = pulumi.output(args.addonVersion).apply((version) => {
-          if (version) {
-            return pulumi.output(version);
-          }
-          return aws.eks.getAddonVersionOutput(
-            {
-              addonName: addonName,
-              kubernetesVersion: this.eksCluster.version,
-              mostRecent: args.mostRecent,
-            },
-            { parent: this },
-          ).version;
-        });
-        const { addonVersion: _, configurationValues: __, ...addonArgs } = args;
+    const addons = pulumi.output(args.addons).apply((addonMap) => {
+      return Object.entries(addonMap ?? {}).map(([addonName, addonArgs]) => {
+        const version = pulumi
+          .output(addonArgs.addonVersion)
+          .apply((resolvedVersion) => {
+            if (resolvedVersion) {
+              return pulumi.output(resolvedVersion);
+            }
+            return aws.eks.getAddonVersionOutput(
+              {
+                addonName: addonName,
+                kubernetesVersion: this.eksCluster.version,
+                mostRecent: addonArgs.mostRecent,
+              },
+              { parent: this },
+            ).version;
+          });
+        const {
+          addonVersion: _,
+          configurationValues: __,
+          ...addonArgsRest
+        } = addonArgs;
 
         return new aws.eks.Addon(
           `${name}-${addonName}`,
           {
-            ...addonArgs,
+            ...addonArgsRest,
             clusterName: this.eksCluster.name,
             addonName: addonName,
             addonVersion: version,
-            configurationValues: args.configurationValues
-              ? pulumi.jsonStringify(args.configurationValues)
+            configurationValues: addonArgs.configurationValues
+              ? pulumi.jsonStringify(addonArgs.configurationValues)
               : undefined,
-            tags: args.tags,
+            tags: addonArgs.tags,
           },
           { parent: this },
         );
@@ -393,7 +399,9 @@ export class Cluster extends pulumi.ComponentResource {
     });
 
     this.installedAddons = pulumi.output(
-      addons.apply((addons) => addons.map((addon) => addon.addonName)),
+      addons.apply((addonResources) =>
+        addonResources.map((addon) => addon.addonName),
+      ),
     );
 
     this.eksCluster = pulumi.output(eksCluster);

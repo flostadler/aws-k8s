@@ -1,7 +1,8 @@
-import * as pulumi from '@pulumi/pulumi';
 import * as aws from '@pulumi/aws';
 import * as awsNative from '@pulumi/aws-native';
 import * as k8s from '@pulumi/kubernetes';
+import * as pulumi from '@pulumi/pulumi';
+import { getKubeConfig } from './kubeconfig';
 import {
   Tags,
   toNativeTags,
@@ -12,7 +13,6 @@ import {
   getRoleName,
   RoleArgs,
 } from './util';
-import { getKubeConfig } from './kubeconfig';
 
 /**
  * Configuration options for deploying Karpenter on an EKS cluster.
@@ -77,7 +77,7 @@ export interface KarpenterArgs {
   /**
    * Additional values to pass to the Karpenter Helm chart.
    */
-  helmValues?: pulumi.Input<{[key: string]: any}>;
+  helmValues?: pulumi.Input<{ [key: string]: any }>;
 
   /**
    * Tags to apply to all resources created by this component.
@@ -181,9 +181,9 @@ export class Karpenter extends pulumi.ComponentResource {
 
     this.nodeTerminationEventRules(name);
 
-    const kubeconfig = pulumi.output(args.kubeconfig).apply((kubeconfig) => {
-      if (kubeconfig) {
-        return pulumi.output(kubeconfig);
+    const kubeconfig = pulumi.output(args.kubeconfig).apply((cfg) => {
+      if (cfg) {
+        return pulumi.output(cfg);
       }
       return getKubeConfig(args.clusterName, { parent: this });
     });
@@ -369,9 +369,9 @@ export class Karpenter extends pulumi.ComponentResource {
       {
         roleName: pulumi
           .output(args.nodeRoleArgs?.name)
-          .apply((name) =>
-            name
-              ? pulumi.output(name)
+          .apply((nodeRoleName) =>
+            nodeRoleName
+              ? pulumi.output(nodeRoleName)
               : pulumi.interpolate`Karpenter-${args.clusterName}`,
           ),
         description: args.nodeRoleArgs?.description,
@@ -394,9 +394,9 @@ export class Karpenter extends pulumi.ComponentResource {
 
         managedPolicyArns: pulumi
           .all([args.nodeRoleArgs?.additionalManagedPolicyArns, ipv6Policy])
-          .apply(([additionalManagedPolicyArns, ipv6Policy]) => [
+          .apply(([additionalManagedPolicyArns, resolvedIpv6Policy]) => [
             ...(additionalManagedPolicyArns ?? []),
-            ...ipv6Policy,
+            ...resolvedIpv6Policy,
             ...managedPolicyArns,
           ]),
 
@@ -456,7 +456,7 @@ export class Karpenter extends pulumi.ComponentResource {
         kmsDataKeyReusePeriodSeconds: args?.kmsDataKeyReusePeriodSeconds,
         tags: pulumi
           .all([args?.tags, parentTags])
-          .apply(([tags, parentTags]) => ({ ...parentTags, ...tags })),
+          .apply(([tags, inheritedTags]) => ({ ...inheritedTags, ...tags })),
       },
       { parent: this },
     );
