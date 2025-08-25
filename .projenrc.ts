@@ -4,6 +4,8 @@ const project = new TypeScriptComponent({
   devDeps: ['@hallcor/pulumi-projen-project-types'],
   name: 'aws-k8s',
   projenrcTs: true,
+  minNodeVersion: '22.0.0',
+  workflowNodeVersion: '22',
 
   deps: [
     '@pulumi/pulumi',
